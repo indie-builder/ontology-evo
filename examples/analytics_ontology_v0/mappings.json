@@ -1,0 +1,86 @@
+[
+  {
+    "id": "map_orders",
+    "term_id": "paid_orders",
+    "database_source": "configured DuckDB analytics",
+    "table": "orders",
+    "column": "order_id",
+    "semantic_filter": "is_test为false，paid_date在期间，status为paid、partially_refunded、refunded。",
+    "aggregation_semantics": "每个订单计一次，不因关联退款或明细重复。",
+    "grain": "一行一订单",
+    "validation": "analytics_policy、analytics_schema、analytics_status"
+  },
+  {
+    "id": "map_gross",
+    "term_id": "gross_payment",
+    "database_source": "configured DuckDB analytics",
+    "table": "orders",
+    "column": "amount_cents",
+    "semantic_filter": "有效支付群组。",
+    "aggregation_semantics": "不同订单的原支付金额总和，整数分。",
+    "grain": "订单",
+    "validation": "analytics_policy与analytics_schema"
+  },
+  {
+    "id": "map_refund",
+    "term_id": "successful_refund",
+    "database_source": "configured DuckDB analytics",
+    "table": "refunds",
+    "column": "amount_cents",
+    "semantic_filter": "status为succeeded且refunded_date早于截止日，原订单在有效支付群组。",
+    "aggregation_semantics": "累计合格退款事件，订单金额不能随多笔退款重复。",
+    "grain": "一次退款事件",
+    "validation": "analytics_policy与analytics_schema"
+  },
+  {
+    "id": "map_net",
+    "term_id": "net_revenue",
+    "database_source": "configured DuckDB analytics",
+    "table": "orders",
+    "column": "amount_cents",
+    "semantic_filter": "有效支付订单及其截止前成功退款。",
+    "aggregation_semantics": "支付金额与成功退款之差，无独立净收入物理字段。",
+    "grain": "支付订单群组",
+    "validation": "analytics_policy与analytics_schema"
+  },
+  {
+    "id": "map_channel",
+    "term_id": "channel",
+    "database_source": "configured DuckDB analytics",
+    "table": "orders",
+    "column": "channel",
+    "grain": "订单",
+    "validation": "analytics_schema与analytics_status"
+  },
+  {
+    "id": "map_date",
+    "term_id": "payment_date",
+    "database_source": "configured DuckDB analytics",
+    "table": "orders",
+    "column": "paid_date",
+    "semantic_filter": "左闭右开期间，不是created_date。",
+    "grain": "支付自然日",
+    "validation": "analytics_policy与analytics_schema"
+  },
+  {
+    "id": "map_region",
+    "term_id": "region",
+    "database_source": "configured DuckDB analytics",
+    "table": "customers",
+    "column": "region",
+    "aggregation_semantics": "customers.customer_id对应orders.customer_id，每客户一行。",
+    "grain": "客户静态记录",
+    "validation": "analytics_policy与analytics_schema"
+  },
+  {
+    "id": "map_buyers",
+    "term_id": "buyers",
+    "database_source": "configured DuckDB analytics",
+    "table": "orders",
+    "column": "customer_id",
+    "semantic_filter": "有效支付群组。",
+    "aggregation_semantics": "客户标识去重。",
+    "grain": "群组内不同客户",
+    "validation": "analytics_policy与analytics_schema"
+  }
+]

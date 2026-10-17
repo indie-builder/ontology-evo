@@ -1,0 +1,51 @@
+{
+  "synthetic": true,
+  "orders": 1000000,
+  "source_type": "duckdb",
+  "passed": true,
+  "semantic_calls_recorded": true,
+  "queries_replayed": 2,
+  "permission_denials": [],
+  "result": [
+    {
+      "channel": "ads",
+      "paid_orders": 28361,
+      "gross_cents": 1440737687,
+      "refund_cents": 75384745,
+      "net_cents": 1365352942
+    },
+    {
+      "channel": "marketplace",
+      "paid_orders": 27950,
+      "gross_cents": 1413443258,
+      "refund_cents": 74773160,
+      "net_cents": 1338670098
+    },
+    {
+      "channel": "store",
+      "paid_orders": 28068,
+      "gross_cents": 1413432828,
+      "refund_cents": 77303195,
+      "net_cents": 1336129633
+    },
+    {
+      "channel": "web",
+      "paid_orders": 28146,
+      "gross_cents": 1414941406,
+      "refund_cents": 77195931,
+      "net_cents": 1337745475
+    }
+  ],
+  "limits": {
+    "rows": 100,
+    "bytes": 65536,
+    "worker_seconds": 15,
+    "duckdb_memory": "512MB",
+    "temp_disk": "256MB"
+  },
+  "limitations": [
+    "No production-scale concurrency test.",
+    "DuckDB memory limit is not OS-level isolation.",
+    "No formal evolution evaluation."
+  ]
+}

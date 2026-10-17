@@ -1,0 +1,1369 @@
+{
+  "status": "design_checks_passed",
+  "runtime_implemented": false,
+  "schema_table_count": 36,
+  "tables": [
+    {
+      "table": "enterprise.audit__source_batch",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "batch_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_system",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_watermark",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "extracted_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "snapshot_id",
+          "type": "VARCHAR"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.audit__source_record",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_system",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_version",
+          "type": "BIGINT"
+        },
+        {
+          "name": "batch_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "business_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "received_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "operation",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "payload",
+          "type": "JSON"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.catalog__category_version",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "category_version_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "category_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "parent_category_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "category_name",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "valid_from",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "valid_to",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_from",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_to",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.catalog__sku_category_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "sku_category_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "sku_version_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "category_version_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "taxonomy",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_version",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "weight",
+          "type": "DECIMAL(18,12)"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.catalog__sku_version",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "sku_version_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "sku_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_system",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_sku_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "brand_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "valid_from",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "valid_to",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_from",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_to",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.commerce__discount_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "discount_allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "promotion_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "funder",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_version",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "amount_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.commerce__order_line",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "sku_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "quantity",
+          "type": "DECIMAL(18,6)"
+        },
+        {
+          "name": "merchandise_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "tax_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "shipping_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.commerce__order_status_event",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "status_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "event_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "source_sequence",
+          "type": "BIGINT"
+        },
+        {
+          "name": "status",
+          "type": "VARCHAR"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.commerce__sales_order",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_system",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_order_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_customer_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "legal_entity_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "store_org_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "channel_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "created_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "currency_exponent",
+          "type": "UTINYINT"
+        },
+        {
+          "name": "is_test",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "batch_id",
+          "type": "VARCHAR"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.finance__fx_rate",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "rate_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "rate_date",
+          "type": "DATE"
+        },
+        {
+          "name": "from_currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "to_currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "rate_type",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "rate",
+          "type": "DECIMAL(24,12)"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.finance__invoice_line",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "invoice_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "legal_entity_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "invoice_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "issued_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "currency_exponent",
+          "type": "UTINYINT"
+        },
+        {
+          "name": "net_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "tax_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.finance__invoice_order_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "invoice_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_version",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "net_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.finance__journal_line",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "journal_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "journal_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "legal_entity_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "account_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "posted_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "currency_exponent",
+          "type": "UTINYINT"
+        },
+        {
+          "name": "debit_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "credit_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.finance__journal_recognition_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "journal_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "recognition_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_version",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "signed_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.finance__recognition_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "recognition_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "fulfillment_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_version",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "net_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.finance__recognition_event",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "recognition_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "legal_entity_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "recognized_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "currency_exponent",
+          "type": "UTINYINT"
+        },
+        {
+          "name": "net_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "reversal_of",
+          "type": "VARCHAR"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.finance__settlement_line",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "settlement_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "statement_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "legal_entity_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "settled_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "currency_exponent",
+          "type": "UTINYINT"
+        },
+        {
+          "name": "gross_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "fee_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "net_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.finance__settlement_payment_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "settlement_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "payment_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_version",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "gross_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "fee_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.fulfillment__cost_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "fulfillment_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "cost_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_version",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "amount_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.fulfillment__fulfillment_line",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "fulfillment_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "warehouse_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "quantity",
+          "type": "DECIMAL(18,6)"
+        },
+        {
+          "name": "fulfilled_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.fulfillment__inventory_cost_event",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "cost_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "sku_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "warehouse_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "inventory_lot_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "cost_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "currency_exponent",
+          "type": "UTINYINT"
+        },
+        {
+          "name": "amount_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.fulfillment__shipment",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "shipment_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "carrier_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "shipped_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "delivered_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.fulfillment__shipment_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "shipment_allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "fulfillment_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "shipment_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "quantity",
+          "type": "DECIMAL(18,6)"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.identity__customer_identity",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "identity_version_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_system",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_customer_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "customer_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "valid_from",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "valid_to",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_from",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_to",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "mapping_status",
+          "type": "VARCHAR"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.identity__customer_version",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "customer_version_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "customer_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "region_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "segment",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "valid_from",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "valid_to",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_from",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_to",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.identity__org_version",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "org_version_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "org_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "parent_org_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "legal_entity_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "valid_from",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "valid_to",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_from",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_to",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.marketing__attribution_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "touch_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "model_version",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "weight",
+          "type": "DECIMAL(18,12)"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.marketing__spend",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "spend_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "campaign_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "legal_entity_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "spent_date",
+          "type": "DATE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "currency_exponent",
+          "type": "UTINYINT"
+        },
+        {
+          "name": "amount_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.marketing__touch",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "touch_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_system",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "anonymous_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_customer_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "campaign_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "touched_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.payments__payment_event",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "payment_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_system",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "payment_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "event_kind",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "event_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "currency_exponent",
+          "type": "UTINYINT"
+        },
+        {
+          "name": "amount_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "outcome",
+          "type": "VARCHAR"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.payments__payment_line_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "payment_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_version",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_method",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "amount_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.returns__refund_event",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "refund_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_system",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "source_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "refund_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "succeeded_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "currency",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "currency_exponent",
+          "type": "UTINYINT"
+        },
+        {
+          "name": "amount_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "outcome",
+          "type": "VARCHAR"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.returns__refund_line_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "refund_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "return_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_version",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_method",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "amount_minor",
+          "type": "BIGINT"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.returns__refund_payment_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "refund_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "payment_event_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "amount_minor",
+          "type": "BIGINT"
+        },
+        {
+          "name": "allocation_version",
+          "type": "VARCHAR"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.returns__return_fulfillment_allocation",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "allocation_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "return_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "fulfillment_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "quantity",
+          "type": "DECIMAL(18,6)"
+        }
+      ]
+    },
+    {
+      "table": "enterprise.returns__return_line",
+      "columns": [
+        {
+          "name": "tenant_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "return_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "order_line_id",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "quantity",
+          "type": "DECIMAL(18,6)"
+        },
+        {
+          "name": "reason",
+          "type": "VARCHAR"
+        },
+        {
+          "name": "requested_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "received_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        },
+        {
+          "name": "known_at",
+          "type": "TIMESTAMP WITH TIME ZONE"
+        }
+      ]
+    }
+  ],
+  "public_counterexamples": {
+    "naive_fanout_minor": 50000,
+    "actual_paid_minor": 20000,
+    "sum_distinct_minor": 10000,
+    "close_snapshot_net_minor": 18000,
+    "later_known_refund_minor": 3000,
+    "historical_region": "east",
+    "cross_tenant_fk_rejected": true,
+    "payment_allocation_conserved": true
+  },
+  "limitations": [
+    "Public hand-built counterexamples, not held-out Agent evaluation.",
+    "No full enterprise generator, production adapters or official ontology build for this schema implemented."
+  ]
+}

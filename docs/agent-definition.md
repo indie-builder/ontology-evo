@@ -13,7 +13,9 @@
 | 插件依赖、工具放行、启动事件 | `.claude/settings.json` | 原生 Claude Code 项目配置，模型与凭据由平台继承 |
 | 当前状态检查 | `.claude/hooks/session-start.py` | 确定性读取状态并提示；不启动分析或重写配置 |
 | 业务定义、映射、约束与证据 | `.evoontology/versions/` 与业务来源文档 | 通过 MCP 按需导航，不将完整知识复制进角色提示 |
-| 数据查询和任务记录 | 官方 evo-semantic 工具及原生只读工具 | 保存真实输入输出，完成任务不代表独立验证正确 |
+| 数据查询和任务记录 | workspace-analytics查询DuckDB，官方evo-semantic记录任务；SQLite用官方内置工具 | 保存真实输入输出，完成任务不代表独立验证正确 |
+| 默认数据源和独立本体选择 | config/analytics.json | 默认百万订单DuckDB及.evoontology/analytics，原SQLite本体保留 |
+| 有界查询入口 | .mcp.json与scripts/analytics-server.py | 固定数据源、禁止外部访问和写入，限制执行时间与返回量 |
 | Build、Explore、Evolve | 官方 EvoOntology 插件技能 | 复用官方算法与生命周期，不在项目复制另一套 |
 
 `.claude/agents/` 用于独立上下文中的子智能体。当前 Workspace 本身是主智能体，无需重复定义一个同名子智能体。未来确有独立审查或专门领域任务时才增加子智能体。

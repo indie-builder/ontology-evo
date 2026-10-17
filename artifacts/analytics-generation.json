@@ -1,0 +1,50 @@
+{
+  "provenance": "synthetic",
+  "benchmark": false,
+  "verified_runs": [
+    {
+      "orders": 100000,
+      "counts": {
+        "customers": 20000,
+        "products": 200,
+        "orders": 100000,
+        "order_items": 200000,
+        "refunds": 22759,
+        "channel_spend": 2920
+      },
+      "checks": {
+        "item_totals": true,
+        "customer_references": true,
+        "refund_bound": true,
+        "parquet_totals": true,
+        "read_only": true
+      },
+      "duckdb_version": "1.5.6",
+      "output_bytes": 4508957
+    },
+    {
+      "orders": 1000000,
+      "counts": {
+        "customers": 200000,
+        "products": 200,
+        "orders": 1000000,
+        "order_items": 2000000,
+        "refunds": 227586,
+        "channel_spend": 2920
+      },
+      "checks": {
+        "item_totals": true,
+        "customer_references": true,
+        "refund_bound": true,
+        "parquet_totals": true,
+        "read_only": true
+      },
+      "duckdb_version": "1.5.6",
+      "output_bytes": 33975867
+    }
+  ],
+  "limitations": [
+    "No production-scale latency or concurrent-agent benchmark.",
+    "Default SQLite ontology unchanged; DuckDB query MCP not integrated."
+  ]
+}

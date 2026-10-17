@@ -36,7 +36,7 @@ class WorkspaceContextTest(unittest.TestCase):
             self.assertIn("active_version=ontology_v8", context)
             self.assertNotIn("阻塞=", context)
             database.unlink()
-            self.assertIn("阻塞=注册SQLite文件不存在", hook.workspace_context(root))
+            self.assertIn("阻塞=注册数据源文件不存在", hook.workspace_context(root))
             (workspace / "active.json").write_text(json.dumps({"active_version": "../outside"}))
             with self.assertRaisesRegex(ValueError, "Invalid active version"):
                 hook.workspace_context(root)

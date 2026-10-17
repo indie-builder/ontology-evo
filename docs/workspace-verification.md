@@ -58,4 +58,23 @@ python3 scripts/verify-workspace.py artifacts/agent-session-host.jsonl
 
 `python3 -I tests/test_workspace_context.py` 的3项测试通过，覆盖未初始化、已配置未发布、自定义SQLite文件名、缺失数据与非法版本路径。调用顺序不是验收依据，验收真实语义使用与执行结果。
 
-交互终端首次启动仍需用户接受目录信任；平台 headless 通过宿主显式配置授权。没有测试用户原平台的 SDK 启动代码、远端环境或其他模型。
+## DuckDB默认数据源复验
+
+新增受控workspace-analytics MCP后，使用百万订单库和独立 `.evoontology/analytics` 执行全新会话：
+
+```bash
+claude -p '2026年第三季度各渠道净收入是多少？使用当前默认的扩展销售数据。' \
+  --settings .claude/settings.json --mcp-config .mcp.json \
+  --output-format stream-json --verbose --no-session-persistence \
+  --permission-mode default --permission-prompts none \
+  > artifacts/agent-session-duckdb.jsonl
+
+uv run --no-project --with duckdb==1.5.6 python -I scripts/verify-workspace.py \
+  artifacts/agent-session-duckdb.jsonl --workspace .evoontology/analytics
+```
+
+会话自动选择新数据源、读取本体、执行两条DuckDB SQL并将实际工具结果记录进官方轨迹；复跑一致、无权限拒绝、数据库哈希不变。任务 `task_8ea96907b36b4c029eec622fa89074d0` 得到第三季度净收入53,778,981.48元，属于合成业务结果。公开验证摘要在 `artifacts/duckdb-integration.json`。
+
+查询边界测试覆盖写入、多语句、外部文件、网络读取、扩展安装、结果行数与字节限制、路径逃逸和超时错误分支。它们不是生产多租户或高并发压测。
+
+交互终端首次启动仍需用户接受目录和项目MCP信任；平台headless通过宿主显式加载配置和工具授权。没有测试用户原平台SDK、远端环境或其他模型。

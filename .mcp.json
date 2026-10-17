@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "workspace-analytics": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--no-project",
+        "--with", "duckdb==1.5.6",
+        "--with", "mcp==2.3.0",
+        "python", "-I", "scripts/analytics-server.py"
+      ]
+    }
+  }
+}

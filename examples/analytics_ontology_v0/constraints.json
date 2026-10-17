@@ -1,0 +1,110 @@
+[
+  {
+    "id": "paid_scope",
+    "target": "paid_orders",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "有效",
+      "支付",
+      "测试",
+      "取消",
+      "状态"
+    ],
+    "severity": "block",
+    "confidence": "high",
+    "description": "排除测试、cancelled和pending；包含发生过支付的已退款订单。",
+    "evidence": [
+      "analytics_policy",
+      "analytics_status"
+    ]
+  },
+  {
+    "id": "date_scope",
+    "target": "payment_date",
+    "constraint_type": "scope",
+    "trigger_keywords": [
+      "季度",
+      "月份",
+      "日期",
+      "时间",
+      "跨期"
+    ],
+    "severity": "block",
+    "confidence": "high",
+    "description": "按paid_date左闭右开归属，季度快照截止下一季度首日；日期为本地业务自然日。",
+    "evidence": [
+      "analytics_policy"
+    ]
+  },
+  {
+    "id": "refund_scope",
+    "target": "successful_refund",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "退款",
+      "截止",
+      "季末",
+      "净收入"
+    ],
+    "severity": "block",
+    "confidence": "high",
+    "description": "只扣原订单群组内、succeeded且refunded_date早于快照截止的退款；不扣待处理、季后成功及其他季度订单退款。",
+    "evidence": [
+      "analytics_policy"
+    ]
+  },
+  {
+    "id": "unit",
+    "target": "gross_payment",
+    "constraint_type": "unit",
+    "trigger_keywords": [
+      "金额",
+      "单位",
+      "元",
+      "分",
+      "收入"
+    ],
+    "severity": "block",
+    "confidence": "high",
+    "description": "orders、order_items和refunds金额均为人民币整数分，展示元时除100。",
+    "evidence": [
+      "analytics_policy",
+      "analytics_schema"
+    ]
+  },
+  {
+    "id": "grain",
+    "target": "paid_orders",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "连接",
+      "重复",
+      "粒度",
+      "退款",
+      "订单数"
+    ],
+    "severity": "block",
+    "confidence": "high",
+    "description": "订单一行一单，商品明细和退款一对多；不能按展开后的行重复累加订单金额。",
+    "evidence": [
+      "analytics_schema",
+      "analytics_policy"
+    ]
+  },
+  {
+    "id": "net_limit",
+    "target": "net_revenue",
+    "constraint_type": "scope",
+    "trigger_keywords": [
+      "净收入",
+      "财务",
+      "现金流"
+    ],
+    "severity": "warning",
+    "confidence": "high",
+    "description": "支付群组净额不是会计确认收入或当期净现金流；品类退款缺少分摊，不能得到可靠品类净收入。",
+    "evidence": [
+      "analytics_policy"
+    ]
+  }
+]

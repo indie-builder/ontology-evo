@@ -1,0 +1,122 @@
+[
+  {
+    "id": "paid_orders",
+    "name": "有效支付订单",
+    "type": "entity",
+    "definition": "非测试且支付日期属于报表期间、状态为paid、partially_refunded或refunded的订单。",
+    "aliases": [
+      "有效订单",
+      "支付订单"
+    ],
+    "scope": "合成扩展数据；一行一订单。",
+    "evidence": [
+      "analytics_policy",
+      "analytics_schema",
+      "analytics_status"
+    ]
+  },
+  {
+    "id": "gross_payment",
+    "name": "支付金额",
+    "type": "metric",
+    "definition": "有效支付订单的原金额总和，存储人民币分，未扣退款。",
+    "aliases": [
+      "销售额",
+      "支付总额"
+    ],
+    "scope": "支付群组，非财务收入确认。",
+    "evidence": [
+      "analytics_policy",
+      "analytics_schema"
+    ]
+  },
+  {
+    "id": "successful_refund",
+    "name": "成功退款",
+    "type": "metric",
+    "definition": "原订单属于本期有效支付群组且退款在快照截止前succeeded的退款金额。",
+    "aliases": [
+      "退款",
+      "退款金额"
+    ],
+    "scope": "同一订单可能多次退款，退款归属原支付群组。",
+    "evidence": [
+      "analytics_policy",
+      "analytics_schema"
+    ]
+  },
+  {
+    "id": "net_revenue",
+    "name": "净收入",
+    "type": "metric",
+    "definition": "有效支付订单原金额减去这些订单在快照截止前成功的退款金额。",
+    "aliases": [
+      "净销售额",
+      "销售净额"
+    ],
+    "scope": "支付群组净额，不代表会计确认收入。",
+    "evidence": [
+      "analytics_policy",
+      "analytics_schema"
+    ]
+  },
+  {
+    "id": "channel",
+    "name": "订单渠道",
+    "type": "dimension",
+    "definition": "订单所属web、store、ads或marketplace渠道。",
+    "aliases": [
+      "渠道"
+    ],
+    "scope": "订单级分类，与客户获客归因不同。",
+    "evidence": [
+      "analytics_policy",
+      "analytics_status"
+    ]
+  },
+  {
+    "id": "payment_date",
+    "name": "支付日期",
+    "type": "dimension",
+    "definition": "订单实际支付业务自然日，用于支付群组归属。",
+    "aliases": [
+      "支付时间",
+      "季度",
+      "月份"
+    ],
+    "scope": "期间左闭右开，不使用created_date替代。",
+    "evidence": [
+      "analytics_policy",
+      "analytics_schema"
+    ]
+  },
+  {
+    "id": "region",
+    "name": "客户地区",
+    "type": "dimension",
+    "definition": "customers当前静态地区，经customer_id关联订单。",
+    "aliases": [
+      "地区",
+      "区域"
+    ],
+    "scope": "非历史维表；未模拟地区变更。",
+    "evidence": [
+      "analytics_policy",
+      "analytics_schema"
+    ]
+  },
+  {
+    "id": "buyers",
+    "name": "购买客户数",
+    "type": "metric",
+    "definition": "有效支付群组内去重customer_id数。",
+    "aliases": [
+      "客户数",
+      "购买人数"
+    ],
+    "evidence": [
+      "analytics_policy",
+      "analytics_schema"
+    ]
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "gross_to_net",
+    "source": "gross_payment",
+    "relation_type": "derivation",
+    "target": "net_revenue",
+    "description": "净收入以支付金额为加项。",
+    "evidence": [
+      "analytics_policy"
+    ]
+  },
+  {
+    "id": "refund_to_net",
+    "source": "successful_refund",
+    "relation_type": "derivation",
+    "target": "net_revenue",
+    "description": "净收入扣除群组截止前成功退款。",
+    "evidence": [
+      "analytics_policy"
+    ]
+  },
+  {
+    "id": "order_region",
+    "source": "paid_orders",
+    "relation_type": "association",
+    "target": "region",
+    "connection_condition": "orders.customer_id对应customers.customer_id。",
+    "description": "支付订单可按客户静态地区分类。",
+    "evidence": [
+      "analytics_schema",
+      "analytics_policy"
+    ]
+  }
+]

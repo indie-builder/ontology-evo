@@ -159,6 +159,20 @@ WITH RECURSIVE hierarchy_edges AS (
  FROM enterprise.fulfillment__inventory_cost_event c LEFT JOIN enterprise.fulfillment__cost_allocation a USING(tenant_id,cost_event_id)
  GROUP BY c.tenant_id,c.cost_event_id,c.amount_minor,a.allocation_version HAVING COALESCE(SUM(a.amount_minor),0)<>c.amount_minor
  UNION ALL
+ SELECT 'journal_recognition_currency_mismatch',a.tenant_id,a.allocation_id
+ FROM enterprise.finance__journal_recognition_allocation a
+ JOIN enterprise.finance__journal_line j USING(tenant_id,journal_line_id)
+ JOIN enterprise.finance__recognition_event r USING(tenant_id,recognition_event_id)
+ WHERE j.currency<>r.currency OR j.currency_exponent<>r.currency_exponent
+ UNION ALL
+ SELECT 'cost_currency_mismatch',a.tenant_id,a.allocation_id
+ FROM enterprise.fulfillment__cost_allocation a
+ JOIN enterprise.fulfillment__inventory_cost_event c USING(tenant_id,cost_event_id)
+ JOIN enterprise.fulfillment__fulfillment_line f USING(tenant_id,fulfillment_line_id)
+ JOIN enterprise.commerce__order_line l ON l.tenant_id=f.tenant_id AND l.order_line_id=f.order_line_id
+ JOIN enterprise.commerce__sales_order o ON o.tenant_id=l.tenant_id AND o.order_id=l.order_id
+ WHERE c.currency<>o.currency OR c.currency_exponent<>o.currency_exponent
+ UNION ALL
  SELECT 'journal_unbalanced',tenant_id,journal_id||':'||legal_entity_id||':'||currency
  FROM enterprise.finance__journal_line GROUP BY tenant_id,journal_id,legal_entity_id,currency,currency_exponent
  HAVING SUM(debit_minor)<>SUM(credit_minor)

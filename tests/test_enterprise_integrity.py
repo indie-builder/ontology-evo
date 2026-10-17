@@ -92,6 +92,28 @@ class EnterpriseIntegrityTest(unittest.TestCase):
             connection.execute("UPDATE enterprise.finance__recognition_event SET currency='CNY'")
             self.assertEqual(design.integrity_violations(connection), [])
 
+    def test_cost_and_journal_bridges_check_currency_and_exponent(self):
+        for currency, exponent in [('USD',2),('CNY',0),('CNY',2)]:
+            with self.subTest(currency=currency, exponent=exponent), duckdb.connect() as connection:
+                connection.execute((ROOT / "schema.sql").read_text())
+                connection.execute("""
+                  INSERT INTO enterprise.commerce__sales_order VALUES ('t1','o1','oms','s1','c1','le1','store','web','2026-07-01','CNY',2,false,'b1');
+                  INSERT INTO enterprise.commerce__order_line VALUES ('t1','l1','o1','sku1',1,10000,0,0);
+                  INSERT INTO enterprise.fulfillment__fulfillment_line VALUES ('t1','f1','l1','w1',1,'2026-07-01','2026-07-01');
+                  INSERT INTO enterprise.finance__recognition_event VALUES ('t1','r1','le1','2026-07-01','2026-07-01','CNY',2,10000,NULL);
+                  INSERT INTO enterprise.finance__recognition_allocation VALUES ('t1','ra','r1','l1','f1','v1',10000);
+                """)
+                connection.execute("INSERT INTO enterprise.fulfillment__inventory_cost_event VALUES ('t1','c1','sku1','w1','lot','2026-07-01','2026-07-01',?,?,5000)",[currency,exponent])
+                connection.execute("INSERT INTO enterprise.fulfillment__cost_allocation VALUES ('t1','ca','f1','c1','v1',5000)")
+                for key,debit,credit in [('j1',10000,0),('j2',0,10000)]:
+                    connection.execute("INSERT INTO enterprise.finance__journal_line VALUES (? ,?,'journal','le1','account','2026-07-01','2026-07-01',?,?,?,?)",['t1',key,currency,exponent,debit,credit])
+                connection.execute("INSERT INTO enterprise.finance__journal_recognition_allocation VALUES ('t1','ja','j1','r1','v1',10000)")
+                checks = {row[0] for row in design.integrity_violations(connection)}
+                if (currency,exponent)==('CNY',2):
+                    self.assertEqual(checks,set())
+                else:
+                    self.assertTrue({'journal_recognition_currency_mismatch','cost_currency_mismatch'}.issubset(checks), checks)
+
     def test_weights_and_allocations_cannot_silently_pass(self):
         with duckdb.connect() as connection:
             connection.execute((ROOT / "schema.sql").read_text())

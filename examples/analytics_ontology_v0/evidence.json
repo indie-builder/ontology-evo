@@ -1,0 +1,26 @@
+[
+  {
+    "id": "analytics_policy",
+    "source": "docs/analytics-policy.md",
+    "query": "读取扩展销售分析口径及生成器业务定义。",
+    "result": "明确支付群组、状态、测试、整数分、退款截止、客户地区、投放和品类分摊限制。",
+    "validation_method": "公开合成数据的业务设计文档",
+    "timestamp": "2026-10-17"
+  },
+  {
+    "id": "analytics_schema",
+    "source": "workspace-analytics.query",
+    "query": "SELECT table_name,column_name,data_type FROM information_schema.columns WHERE table_schema='main' ORDER BY table_name,ordinal_position",
+    "result": "真实只读工具返回六表字段；orders有paid_date、created_date、amount_cents、channel、customer_id；refunds有order_id、status、refunded_date、amount_cents；customers有customer_id、region。",
+    "validation_method": "受控DuckDB真实schema查询；生成检查验证明细金额与客户引用。",
+    "timestamp": "2026-10-17"
+  },
+  {
+    "id": "analytics_status",
+    "source": "workspace-analytics.query",
+    "query": "SELECT status,COUNT(*) n,COUNT(DISTINCT channel) channels FROM orders GROUP BY status ORDER BY status",
+    "result": "cancelled=50000、paid=800000、partially_refunded=50000、pending=50000、refunded=50000；每种状态覆盖4渠道。",
+    "validation_method": "百万订单库真实只读查询",
+    "timestamp": "2026-10-17"
+  }
+]

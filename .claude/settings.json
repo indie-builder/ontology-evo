@@ -21,9 +21,13 @@
       "mcp__plugin_evoontology_evo-semantic__resolve_ontology_task",
       "mcp__plugin_evoontology_evo-semantic__execute_ontology_query",
       "mcp__plugin_evoontology_evo-semantic__record_ontology_task_event",
-      "mcp__plugin_evoontology_evo-semantic__finish_ontology_task"
+      "mcp__plugin_evoontology_evo-semantic__finish_ontology_task",
+      "mcp__workspace-analytics__analytics_status",
+      "mcp__workspace-analytics__query",
+      "mcp__workspace-analytics__schema"
     ]
   },
+  "enabledMcpjsonServers": ["workspace-analytics"],
   "hooks": {
     "SessionStart": [
       {

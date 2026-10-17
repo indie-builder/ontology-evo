@@ -1,0 +1,5 @@
+{
+  "database": "data/generated/million-orders/sales.duckdb",
+  "ontology_workspace": ".evoontology/analytics",
+  "business_policy": "docs/analytics-policy.md"
+}

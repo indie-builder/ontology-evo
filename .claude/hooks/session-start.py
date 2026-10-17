@@ -5,7 +5,13 @@ from pathlib import Path
 
 
 def workspace_context(root):
+    analytics_config = root / "config/analytics.json"
     workspace = root / ".evoontology"
+    if analytics_config.is_file():
+        selected = json.loads(analytics_config.read_text(encoding="utf-8"))
+        workspace = (root / selected["ontology_workspace"]).resolve()
+        if not workspace.is_relative_to(root.resolve()):
+            raise ValueError("Configured ontology workspace escapes project root")
     summary = [f"当前Workspace是销售分析智能体。根目录={root}；EvoOntology workspace={workspace}。"]
     project_file = workspace / "project.json"
     active_file = workspace / "active.json"
@@ -15,12 +21,12 @@ def workspace_context(root):
         project = json.loads(project_file.read_text(encoding="utf-8"))
         source = project["data_source"]
         summary.append("注册数据源=" + json.dumps(source, ensure_ascii=False) + "。")
-        if isinstance(source, dict) and source.get("type") == "sqlite":
+        if isinstance(source, dict) and source.get("type") in {"sqlite", "duckdb"}:
             database = Path(source["path"])
             if not database.is_absolute():
-                summary.append("阻塞=注册SQLite路径不是绝对路径，需显式修正项目配置。")
+                summary.append("阻塞=注册数据源路径不是绝对路径，需显式修正项目配置。")
             elif not database.is_file():
-                summary.append("阻塞=注册SQLite文件不存在，先恢复数据或显式重新配置；不能猜用其他文件。")
+                summary.append("阻塞=注册数据源文件不存在，先恢复数据或显式重新配置；不能猜用其他文件。")
         if not active_file.is_file():
             summary.append("状态=已配置但未发布本体。继续官方构建流程，不能假定已有active版本。")
         else:

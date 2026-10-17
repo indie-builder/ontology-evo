@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "command": [
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-v"
+      ],
+      "passed": true,
+      "summary": [
+        "Ran 19 tests in 1.093s",
+        "",
+        "OK"
+      ]
+    },
+    {
+      "command": [
+        "design/enterprise/verify-design.py"
+      ],
+      "passed": true,
+      "summary": {
+        "status": "design_checks_passed",
+        "schema_table_count": 36
+      }
+    },
+    {
+      "command": [
+        "demo.py",
+        "check"
+      ],
+      "passed": true,
+      "summary": {
+        "read_only_verified": true
+      }
+    },
+    {
+      "command": [
+        "scripts/verify-workspace.py",
+        "artifacts/agent-session-error-recovery.jsonl",
+        "--workspace",
+        ".evoontology/analytics"
+      ],
+      "passed": true,
+      "summary": {
+        "passed": true,
+        "tasks": [
+          {
+            "question": "做一次受控查询错误恢复验证并记录同一个真实任务：先查询 SELECT definitely_missing_column FROM orders，保留真实错误；再修正为查询当前扩展数据的订单总数。两次实际工具结果都记录，最终只报告正确总数及已恢复的错误，不修改数据或本体。",
+            "queries": 2
+          }
+        ]
+      }
+    }
+  ],
+  "enterprise_runtime_implemented": false,
+  "limitations": [
+    "36-table schema and public counterexamples only; full enterprise agent pipeline is not implemented.",
+    "No independent reviewer or production concurrency test."
+  ]
+}

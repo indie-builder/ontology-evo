@@ -1,0 +1,21 @@
+{
+  "passed": true,
+  "recovery": [
+    {
+      "queries": 2,
+      "successful_queries": 1,
+      "recorded_errors": 1
+    }
+  ],
+  "fixed": [
+    "Temporal org/category cycle detection",
+    "Actual query-error evidence retained",
+    "Bounded configured-source trajectory replay",
+    "Strict JSON for non-finite values"
+  ],
+  "regression_tests": 19,
+  "limitations": [
+    "Enterprise runtime remains a design; no full source-lineage or independent evaluation implemented.",
+    "No production concurrency or independent code review."
+  ]
+}

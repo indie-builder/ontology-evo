@@ -1,20 +1,32 @@
 ---
 name: setup-workspace
-description: Initialize this cloned sales-analysis Workspace from the public synthetic dataset and sample ontology using the official EvoOntology MCP tools.
+description: Initialize this cloned sales-analysis Workspace with its configured DuckDB analytics dataset and official EvoOntology sample, or the original SQLite example when explicitly requested.
 disable-model-invocation: true
 ---
 
 # 初始化克隆后的工作区
 
-以根目录 `CLAUDE.md` 所在目录为当前Workspace。所有路径基于当前克隆位置解析，不使用其他机器的绝对路径。只操作当前工作区。
+以根目录CLAUDE.md所在目录为Workspace。所有路径基于当前克隆位置。只操作当前工作区，不覆盖已有本体或生成数据。
 
-1. 确认官方 `evo-semantic` MCP 已连接，`data/sales.sqlite` 存在。数据库是公开合成样本，业务定义见 `docs/business-policy.md`。
-2. 如果 `.evoontology/active.json` 已存在，报告已有版本并停止初始化，不覆盖。若仅有 project.json，则读取复用，发现不同数据源时先说明冲突。
-3. 调用 `configure_ontology_project`，workspace 为当前根目录下 `.evoontology` 的绝对路径。project 使用 schema_version:1、mode:rolling_trajectory，data_source:{type:sqlite,path:当前data/sales.sqlite绝对路径}，workload_source:{type:project_workload,source:public synthetic sales example}，evaluation:{type:public_construction_checks,formal_evolution_evaluator:not_configured,provenance:synthetic}，boundary:{strategy:rolling_trajectory,scope:public construction demonstration; no formal evolution evaluator}。
-4. 用原生只读工具检查SQLite结构和代表性值，与业务文档和 `examples/ontology_v0/` 中的证据核对。样例只适用于这份未修改的数据，发现差异时停止导入，改用官方 build-ontology 对实际数据重新构建。
-5. 读取 `examples/ontology_v0/` 下 terms.json、mappings.json、relations.json、constraints.json、evidence.json。将五组原始记录交给官方 `save_version` 保存为 ontology_v0，不能自行替代官方发布生命周期。
-6. 调用 `annotate_ontology_version`，说明这是公开合成样例的导入，不是新发现或独立评估，links 可为空；限制包括无生产数据、无独立进化评估、支付群组净额不代表财务确认收入。
-7. 调用 `publish_ontology_build` 发布，初始化active和checkpoint。仅用户要求展示时打开浏览器，headless时传 open_browser:false。
-8. 报告初始化结果，提示直接提出销售问题。任务和轨迹由后续真实分析产生，不从作者机器复制。
+## 选择数据源
 
-全新数据集或希望观察自动知识构建时，直接使用官方 `evoontology:build-ontology` 技能，以用户问题和底层数据证据构建，不导入本样例。
+默认读取 `config/analytics.json`，使用注册的database、ontology_workspace和business_policy。用户明确选择原12单SQLite样例时使用 `data/sales.sqlite`、根 `.evoontology`、`docs/business-policy.md` 和 `examples/ontology_v0`；否则使用 `examples/analytics_ontology_v0`。
+
+DuckDB文件尚不存在时，说明将生成百万订单及Parquet副本。在当前根目录使用原生工具执行：
+
+```bash
+uv run --no-project --with duckdb==1.5.6 python -I scripts/generate-analytics.py --orders 1000000 --output data/generated/million-orders
+```
+
+命令输出目录必须为空。已存在但生成不完整时报告状态，不自动删除或覆盖。生成成功后检查manifest，确认合成数据来源和检查结果。若宿主禁止Shell，由宿主预先生成数据，不编造成功。
+
+## 官方MCP发布
+
+1. 确认官方evo-semantic已连接。DuckDB还需workspace-analytics MCP，调用analytics_status核对配置和实际schema；SQLite用原生只读工具核对。
+2. 所选本体目录已有active.json时停止导入，报告已有版本。仅有project.json时复用，发现不同数据源先报告冲突。
+3. 通过configure_ontology_project保存schema_version:1、mode:rolling_trajectory、data_source:{type:duckdb或sqlite,path:所选数据库绝对路径}，workload_source:{type:project_workload,source:public synthetic sales example}，evaluation:{type:public_construction_checks,formal_evolution_evaluator:not_configured,provenance:synthetic}，boundary:{strategy:rolling_trajectory,scope:public construction demonstration; no formal evolution evaluator}。DuckDB可追加query_tool:workspace-analytics.query。
+4. 读取所选业务说明，查询元数据和代表性值，对照所选examples目录的证据。样例只适用于配套生成器，差异无法解释时停止导入，使用官方build-ontology为实际数据重新构建。
+5. 将所选examples中的terms、mappings、relations、constraints、evidence五份JSON交给官方save_version写入ontology_v0。再annotate_ontology_version说明公开样例导入及限制，links可为空。最后publish_ontology_build初始化active和checkpoint，headless传open_browser:false。
+6. 告知可直接提问。新任务由真实问答产生，不复制作者历史。用户希望观察从数据自主构建知识时改用官方evoontology:build-ontology，不将导入样例描述为自主发现。
+
+EvoOntology内置execute_ontology_query仅执行SQLite。DuckDB数据查询使用workspace-analytics.query，并由主会话用record_ontology_task_event写入实际观察。

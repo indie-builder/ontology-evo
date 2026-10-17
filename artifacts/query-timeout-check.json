@@ -1,0 +1,8 @@
+{
+  "passed": true,
+  "actual_expensive_query_interrupted": true,
+  "result": {
+    "status": "error",
+    "error": "INTERRUPT Error: Interrupted!"
+  }
+}

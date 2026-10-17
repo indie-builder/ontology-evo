@@ -17,3 +17,4 @@ outputs/
 .env.*
 !.env.example
 .DS_Store
+data/generated/

@@ -10,7 +10,7 @@ argument-hint: "<销售分析问题>"
 
 ## 定位和恢复
 
-读取本工作区 `.evoontology/project.json` 和 `active.json`，以 `.evoontology` 的绝对路径作为每次 MCP 的 `workspace`。没有项目上下文或 active 版本时按根目录 `CLAUDE.md` 的初始化路由处理，不假定一定已有本体。
+若存在 `config/analytics.json`，默认调用 `workspace-analytics` 的 `analytics_status`，获取精确的 ontology_workspace、数据库和业务说明路径，并读取该本体的project.json、active.json。否则或用户明确要求原12单SQLite时，选择根 `.evoontology` 和 docs/business-policy.md。所有语义MCP调用显式传所选工作区绝对路径。缺少配置、数据或active版本时按CLAUDE.md初始化路由处理，不静默切回另一数据源。
 
 用 `ontology_workflow_status` 恢复与当前问题、本体版本和用户意图一致的未完成任务。不要结束其他任务；用户要求重新查询时新建任务，不把已有结果当成新执行。
 
@@ -20,7 +20,7 @@ argument-hint: "<销售分析问题>"
 
 概念未知时用 `browse_semantics` 发现相关项。已知语义 ID 或明确概念时可直接解析，不强制先 browse。通过 `resolve_semantics` 或任务绑定的 `resolve_ontology_task` 获取 Mapping、Relation、Constraint、Evidence。每次最多解析五项，按分析需要继续导航，避免把整个本体塞入上下文。
 
-派生指标沿依赖解析相关原始指标。遇到证据不足、业务口径冲突或数据结构变化时，再读取 `docs/business-policy.md`、元数据和代表性样本。业务条件、单位、粒度和时间归属从这些来源取得，不把示例口径当所有数据源的固定规则。查不到支持时记录限制。
+派生指标沿依赖解析相关原始指标。遇到证据不足、业务口径冲突或数据结构变化时，再读取所选配置的业务说明、元数据和代表性样本。业务条件、单位、粒度和时间归属从这些来源取得，不把示例口径当所有数据源的固定规则。查不到支持时记录限制。
 
 仅解释概念时，以语义及证据回答，不创建没有原生数据执行的 completed 任务。
 
@@ -32,11 +32,11 @@ argument-hint: "<销售分析问题>"
 
 ## 查询与证据
 
-根据映射和约束编写本次查询。表字段未知时先查结构。SQLite 使用 `execute_ontology_query(task_id,query,event_id)`，它在注册数据源上有界只读执行并自动记录。其他源通过宿主原生只读工具查询，随后用 `record_ontology_task_event` 保存实际输入输出。不得用固定脚本答案、旧页面或无执行的 SQL 代替真实结果。
+根据映射和约束编写本次查询。表字段未知时先查结构。DuckDB用schema工具按schema、table过滤；返回next_cursor时继续分页，不能把analytics_status的截断首页当完整schema。SQLite 使用 `execute_ontology_query(task_id,query,event_id)`，它在注册数据源上有界只读执行并自动记录。DuckDB必须调用 `workspace-analytics` 的 `query(sql)`，收到真实结果后立即用 `record_ontology_task_event(task_id,tool="workspace-analytics.query",arguments={sql:实际SQL},result=实际完整工具返回,event_id=唯一ID,error=返回status是否error)` 保存。错误也记录，不能把未执行SQL当结果。其他源使用宿主受控只读工具并记录。不要将DuckDB传给官方SQLite执行工具，也不要使用Bash绕过受控查询MCP。不得用固定脚本答案、旧页面或无执行的 SQL 代替真实结果。
 
 核对问题对应的日期范围、金额单位、状态和过滤、退款归属、关联粒度及比率分母；具体值从当前证据取得。多笔退款和明细不能放大订单级金额。空数据不等于零收入，分母为零时比率无定义。
 
-查询最多返回100行；聚合或分页，明确截断范围。事件 ID 在任务内唯一，相同观察重试才复用。保留真实错误，修正后继续；不改写已记录结果。不记录私有推理链。
+查询最多返回100行；聚合或分页，明确截断范围。事件 ID 在任务内唯一，相同观察重试才复用。保留真实错误，修正后继续；NaN、Infinity等非有限值以明确文本返回，不能当正常数值或转成零。不改写已记录结果。不记录私有推理链。
 
 ## 完成与输出
 

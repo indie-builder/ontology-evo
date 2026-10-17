@@ -135,6 +135,26 @@ WITH RECURSIVE hierarchy_edges AS (
  GROUP BY s.tenant_id,s.settlement_line_id,s.gross_minor,s.fee_minor,a.allocation_version
  HAVING COALESCE(SUM(a.gross_minor),0)<>s.gross_minor OR COALESCE(SUM(a.fee_minor),0)<>s.fee_minor
  UNION ALL
+ SELECT 'settlement_currency_mismatch',a.tenant_id,a.allocation_id
+ FROM enterprise.finance__settlement_payment_allocation a
+ JOIN enterprise.finance__settlement_line s USING(tenant_id,settlement_line_id)
+ JOIN enterprise.payments__payment_event p USING(tenant_id,payment_event_id)
+ WHERE s.currency<>p.currency OR s.currency_exponent<>p.currency_exponent
+ UNION ALL
+ SELECT 'invoice_currency_mismatch',a.tenant_id,a.allocation_id
+ FROM enterprise.finance__invoice_order_allocation a
+ JOIN enterprise.finance__invoice_line i USING(tenant_id,invoice_line_id)
+ JOIN enterprise.commerce__order_line l USING(tenant_id,order_line_id)
+ JOIN enterprise.commerce__sales_order o ON o.tenant_id=l.tenant_id AND o.order_id=l.order_id
+ WHERE i.currency<>o.currency OR i.currency_exponent<>o.currency_exponent
+ UNION ALL
+ SELECT 'recognition_currency_mismatch',a.tenant_id,a.allocation_id
+ FROM enterprise.finance__recognition_allocation a
+ JOIN enterprise.finance__recognition_event r USING(tenant_id,recognition_event_id)
+ JOIN enterprise.commerce__order_line l USING(tenant_id,order_line_id)
+ JOIN enterprise.commerce__sales_order o ON o.tenant_id=l.tenant_id AND o.order_id=l.order_id
+ WHERE r.currency<>o.currency OR r.currency_exponent<>o.currency_exponent
+ UNION ALL
  SELECT 'cost_allocation_total',c.tenant_id,c.cost_event_id||':'||COALESCE(a.allocation_version,'missing')
  FROM enterprise.fulfillment__inventory_cost_event c LEFT JOIN enterprise.fulfillment__cost_allocation a USING(tenant_id,cost_event_id)
  GROUP BY c.tenant_id,c.cost_event_id,c.amount_minor,a.allocation_version HAVING COALESCE(SUM(a.amount_minor),0)<>c.amount_minor

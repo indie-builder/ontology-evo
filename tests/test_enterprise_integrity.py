@@ -65,6 +65,33 @@ class EnterpriseIntegrityTest(unittest.TestCase):
             self.assertNotIn("org_hierarchy_cycle", checks)
             self.assertNotIn("category_hierarchy_cycle", checks)
 
+    def test_finance_allocations_reject_currency_and_exponent_mismatch(self):
+        with duckdb.connect() as connection:
+            connection.execute((ROOT / "schema.sql").read_text())
+            connection.execute("""
+              INSERT INTO enterprise.commerce__sales_order VALUES
+                ('t1','o1','oms','source1','c1','le1','store1','web','2026-07-01','CNY',2,false,'b1');
+              INSERT INTO enterprise.commerce__order_line VALUES ('t1','l1','o1','sku1',1,10000,0,0);
+              INSERT INTO enterprise.payments__payment_event VALUES
+                ('t1','p1','psp','e1','pay1','capture','2026-07-01','2026-07-01','CNY',2,10000,'succeeded');
+              INSERT INTO enterprise.payments__payment_line_allocation VALUES ('t1','pa','p1','l1','v1','explicit',10000);
+              INSERT INTO enterprise.finance__settlement_line VALUES
+                ('t1','s1','stmt','le1','2026-07-01','2026-07-01','USD',2,10000,0,10000);
+              INSERT INTO enterprise.finance__settlement_payment_allocation VALUES ('t1','sa','s1','p1','v1',10000,0);
+              INSERT INTO enterprise.finance__invoice_line VALUES
+                ('t1','i1','le1','invoice','2026-07-01','2026-07-01','CNY',0,10000,0);
+              INSERT INTO enterprise.finance__invoice_order_allocation VALUES ('t1','ia','i1','l1','v1',10000);
+              INSERT INTO enterprise.finance__recognition_event VALUES
+                ('t1','r1','le1','2026-07-01','2026-07-01','USD',2,10000,NULL);
+              INSERT INTO enterprise.finance__recognition_allocation VALUES ('t1','ra','r1','l1',NULL,'v1',10000);
+            """)
+            checks = {row[0] for row in design.integrity_violations(connection)}
+            self.assertTrue({'settlement_currency_mismatch','invoice_currency_mismatch','recognition_currency_mismatch'}.issubset(checks), checks)
+            connection.execute("UPDATE enterprise.finance__settlement_line SET currency='CNY'")
+            connection.execute("UPDATE enterprise.finance__invoice_line SET currency_exponent=2")
+            connection.execute("UPDATE enterprise.finance__recognition_event SET currency='CNY'")
+            self.assertEqual(design.integrity_violations(connection), [])
+
     def test_weights_and_allocations_cannot_silently_pass(self):
         with duckdb.connect() as connection:
             connection.execute((ROOT / "schema.sql").read_text())

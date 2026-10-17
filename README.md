@@ -146,7 +146,7 @@ uv run --no-project --with duckdb==1.5.6 --with mcp==2.3.0 \
   python -I scripts/validate-all.py
 ```
 
-当前19项回归测试、36表DDL与公开关系反例、SQLite算术检查通过。上面命令不调用LLM。已有本地会话时可追加 `--session <会话.jsonl>`，验证实际工具响应、轨迹和有界SQL复跑；原始会话不随仓库分发。
+当前20项回归测试、36表DDL与公开关系反例、SQLite算术检查通过。上面命令不调用LLM。已有本地会话时可追加 `--session <会话.jsonl>`，验证实际工具响应、轨迹和有界SQL复跑；原始会话不随仓库分发。
 
 实际会话已验证：渠道净收入、缺乏退款分摊时拒绝品类净收入，以及先发生Binder Error再修正查询的任务恢复。详见[验证与修复记录](docs/validation-and-fixes.md)、[Workspace实测](docs/workspace-verification.md)和[完整检查摘要](artifacts/full-validation.json)。这些不是生产性能或独立模型准确率评测。
 

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "rel_gross_net",
+    "source": "gross_payment",
+    "relation_type": "derivation",
+    "target": "net_revenue",
+    "description": "净收入以支付金额为加项。",
+    "evidence": [
+      "ev_policy"
+    ]
+  },
+  {
+    "id": "rel_refund_net",
+    "source": "successful_refund",
+    "relation_type": "derivation",
+    "target": "net_revenue",
+    "description": "净收入以成功退款为减项，退款限定原订单群组和截止时间。",
+    "evidence": [
+      "ev_policy",
+      "ev_refunds"
+    ]
+  },
+  {
+    "id": "rel_gross_aov",
+    "source": "gross_payment",
+    "relation_type": "derivation",
+    "target": "payment_aov",
+    "description": "支付客单价的分子是支付金额。",
+    "evidence": [
+      "ev_policy"
+    ]
+  },
+  {
+    "id": "rel_order_aov",
+    "source": "paid_order",
+    "relation_type": "derivation",
+    "target": "payment_aov",
+    "description": "有效支付订单数是客单价分母。",
+    "evidence": [
+      "ev_policy",
+      "ev_grain"
+    ]
+  },
+  {
+    "id": "rel_order_refund",
+    "source": "paid_order",
+    "relation_type": "composition",
+    "target": "refund_event",
+    "connection_condition": "refunds.order_id 引用 orders.order_id，一个订单可以包含多个退款事件。",
+    "description": "退款事件依附原订单存在，退款事件粒度低于订单。",
+    "evidence": [
+      "ev_schema",
+      "ev_refunds"
+    ]
+  }
+]

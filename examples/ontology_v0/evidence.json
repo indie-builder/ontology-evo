@@ -1,0 +1,58 @@
+[
+  {
+    "id": "ev_policy",
+    "source": "docs/business-policy.md",
+    "query": "读取本项目公开合成业务口径说明。",
+    "result": "该说明明确支付日期归属、状态、测试排除、整数分、退款截止和群组、客单价及非财务收入边界。",
+    "validation_method": "本实例人工定义的公开业务合同，结合数据探查；不推断为通用业务规则。",
+    "timestamp": "2026-10-17"
+  },
+  {
+    "id": "ev_schema",
+    "source": "data/sales.sqlite",
+    "query": "SELECT name,sql FROM sqlite_master WHERE type='table' ORDER BY name",
+    "result": "orders 以 order_id 为主键；order_items 与 refunds 通过 order_id 外键关联 orders。amount_cents 均为 INTEGER。完整结果见 artifacts/probes.json#schema。",
+    "validation_method": "真实只读 SQLite 元数据查询",
+    "timestamp": "2026-10-17"
+  },
+  {
+    "id": "ev_status",
+    "source": "data/sales.sqlite",
+    "query": "SELECT status,is_test,COUNT(*) AS n FROM orders GROUP BY status,is_test ORDER BY status,is_test",
+    "result": "非测试 cancelled=1、paid=7、partially_refunded=1、pending=1、refunded=1；测试 paid=1。",
+    "validation_method": "真实只读查询；语义由 business-policy.md 确定。",
+    "timestamp": "2026-10-17"
+  },
+  {
+    "id": "ev_boundary",
+    "source": "data/sales.sqlite",
+    "query": "SELECT order_id,created_at,paid_at FROM orders WHERE order_id IN ('O10','O11','O12') ORDER BY order_id",
+    "result": "O10 创建2026-06-30支付2026-07-01；O11 创建2026-09-30支付2026-10-01；O12 支付2026-06-15。",
+    "validation_method": "真实只读边界样本查询",
+    "timestamp": "2026-10-17"
+  },
+  {
+    "id": "ev_refunds",
+    "source": "data/sales.sqlite",
+    "query": "SELECT * FROM refunds ORDER BY refund_id",
+    "result": "O02 有两笔 succeeded 退款4000和1000分；O03 有 pending 3000分和十月成功2000分；O04 季内成功8000分；O12 七月成功1000分。完整结果见 artifacts/probes.json#refunds。",
+    "validation_method": "真实只读退款记录查询",
+    "timestamp": "2026-10-17"
+  },
+  {
+    "id": "ev_grain",
+    "source": "data/sales.sqlite",
+    "query": "SELECT o.order_id,COUNT(i.item_id) AS items,COUNT(DISTINCT r.refund_id) AS refunds FROM orders o JOIN order_items i USING(order_id) LEFT JOIN refunds r USING(order_id) GROUP BY o.order_id ORDER BY o.order_id",
+    "result": "O02、O03 各有2个不同退款事件，连接后商品明细出现4行；无多次退款订单显示2个商品行。items 是展开行数，不是不同商品明细数。完整结果见 artifacts/probes.json#grain。",
+    "validation_method": "真实只读关系展开查询，与外键和明细金额校验共同验证。",
+    "timestamp": "2026-10-17"
+  },
+  {
+    "id": "ev_units",
+    "source": "data/sales.sqlite",
+    "query": "SELECT typeof(amount_cents) AS storage_type,MIN(amount_cents) AS minimum,MAX(amount_cents) AS maximum FROM orders GROUP BY typeof(amount_cents)",
+    "result": "orders 金额实际存储类型 integer，范围4000至50000；币种和分单位由 business-policy.md 定义。",
+    "validation_method": "真实只读类型查询及业务文档交叉核实。",
+    "timestamp": "2026-10-17"
+  }
+]

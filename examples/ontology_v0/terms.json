@@ -1,0 +1,143 @@
+[
+  {
+    "id": "paid_order",
+    "name": "有效支付订单",
+    "type": "entity",
+    "definition": "非测试且已实际支付的订单，包括部分退款和全部退款后的订单。未支付和取消订单不进入支付群组。",
+    "scope": "合成销售实例，按支付日期归属报表期间。",
+    "aliases": [
+      "paid order",
+      "有效订单",
+      "支付订单"
+    ],
+    "evidence": [
+      "ev_policy",
+      "ev_status",
+      "ev_schema"
+    ]
+  },
+  {
+    "id": "gross_payment",
+    "name": "支付金额",
+    "type": "metric",
+    "definition": "报表期间有效支付订单的原始支付金额总和，未扣退款。",
+    "scope": "演示支付群组报表；不等同于财务收入。",
+    "aliases": [
+      "gross payment",
+      "支付总额"
+    ],
+    "evidence": [
+      "ev_policy",
+      "ev_units"
+    ]
+  },
+  {
+    "id": "successful_refund",
+    "name": "成功退款",
+    "type": "metric",
+    "definition": "属于本期支付订单且在快照截止前成功的退款金额。待处理和截止后退款不计入当前快照。",
+    "scope": "退款按原支付订单归属，非当期全部退款现金流。",
+    "aliases": [
+      "successful refund",
+      "退款",
+      "成功退款金额"
+    ],
+    "evidence": [
+      "ev_policy",
+      "ev_refunds"
+    ]
+  },
+  {
+    "id": "net_revenue",
+    "name": "净收入",
+    "type": "metric",
+    "definition": "本期有效支付订单的原支付金额减去属于这些订单且快照截止前成功的退款。",
+    "scope": "本演示的支付群组净额，非财务收入确认。",
+    "aliases": [
+      "net revenue",
+      "净销售额",
+      "销售净额"
+    ],
+    "evidence": [
+      "ev_policy",
+      "ev_refunds"
+    ]
+  },
+  {
+    "id": "payment_date",
+    "name": "支付日期",
+    "type": "dimension",
+    "definition": "实际支付发生的业务自然日，决定支付订单群组的报表归属。",
+    "scope": "YYYY-MM-DD 的演示本地自然日，未模拟时区。",
+    "aliases": [
+      "paid_at",
+      "支付时间",
+      "支付月份"
+    ],
+    "evidence": [
+      "ev_policy",
+      "ev_boundary"
+    ]
+  },
+  {
+    "id": "order_channel",
+    "name": "订单渠道",
+    "type": "dimension",
+    "definition": "每笔订单记录的渠道 web、store 或 ads，不代表客户获客渠道。",
+    "scope": "订单级渠道维度。",
+    "aliases": [
+      "channel",
+      "渠道"
+    ],
+    "evidence": [
+      "ev_policy",
+      "ev_schema"
+    ]
+  },
+  {
+    "id": "paying_customer",
+    "name": "购买客户数",
+    "type": "metric",
+    "definition": "本期有效支付订单中的不同客户标识数量。",
+    "scope": "按订单群组去重客户，不等同于订单数。",
+    "aliases": [
+      "buyers",
+      "购买人数",
+      "客户数"
+    ],
+    "evidence": [
+      "ev_policy",
+      "ev_schema"
+    ]
+  },
+  {
+    "id": "payment_aov",
+    "name": "支付客单价",
+    "type": "metric",
+    "definition": "本期支付金额除以本期有效支付订单数，不扣退款，分母不是购买客户数。",
+    "scope": "单位为元每订单，分母为零时无定义。",
+    "aliases": [
+      "AOV",
+      "客单价"
+    ],
+    "evidence": [
+      "ev_policy",
+      "ev_grain"
+    ]
+  },
+  {
+    "id": "refund_event",
+    "name": "退款事件",
+    "type": "entity",
+    "definition": "属于一笔原订单的一次退款记录，同一订单可以有多笔退款。",
+    "scope": "refunds 每条记录对应一个退款事件。",
+    "aliases": [
+      "refund event",
+      "退款记录"
+    ],
+    "evidence": [
+      "ev_schema",
+      "ev_refunds"
+    ]
+  }
+]

@@ -1,0 +1,143 @@
+[
+  {
+    "id": "rule_paid",
+    "target": "paid_order",
+    "constraint_type": "enum_semantics",
+    "trigger_keywords": [
+      "有效订单",
+      "支付",
+      "取消",
+      "测试",
+      "pending",
+      "refunded"
+    ],
+    "severity": "block",
+    "scope": "演示有效支付订单",
+    "confidence": "high",
+    "description": "is_test 为 0，支付日期在期间，status 为 paid、partially_refunded 或 refunded。cancelled、pending 及测试订单排除。",
+    "evidence": [
+      "ev_policy",
+      "ev_status"
+    ]
+  },
+  {
+    "id": "rule_dates",
+    "target": "payment_date",
+    "constraint_type": "scope",
+    "trigger_keywords": [
+      "季度",
+      "月份",
+      "时间",
+      "日期",
+      "创建",
+      "支付"
+    ],
+    "severity": "block",
+    "scope": "2026 Q3 快照",
+    "confidence": "high",
+    "description": "支付日期在 2026-07-01 至 2026-10-01，包含前者不包含后者。created_at 不能代替 paid_at，O10 属于本期而 O11 不属于本期。",
+    "evidence": [
+      "ev_policy",
+      "ev_boundary"
+    ]
+  },
+  {
+    "id": "rule_unit",
+    "target": "gross_payment",
+    "constraint_type": "unit",
+    "trigger_keywords": [
+      "金额",
+      "元",
+      "分",
+      "单位",
+      "收入",
+      "客单价"
+    ],
+    "severity": "block",
+    "scope": "orders、order_items、refunds 的 amount_cents",
+    "confidence": "high",
+    "description": "所有金额列存储为人民币整数分，展示为元时换算一百分为一元。",
+    "evidence": [
+      "ev_policy",
+      "ev_units"
+    ]
+  },
+  {
+    "id": "rule_refund",
+    "target": "successful_refund",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "退款",
+      "季末",
+      "成功",
+      "净收入"
+    ],
+    "severity": "block",
+    "scope": "2026 Q3 支付群组",
+    "confidence": "high",
+    "description": "只计算本期有效支付订单、截止 2026-10-01 前 succeeded 退款。pending 和季后退款不计入，二季度订单的三季度退款不属于本期支付群组。",
+    "evidence": [
+      "ev_policy",
+      "ev_refunds",
+      "ev_boundary"
+    ]
+  },
+  {
+    "id": "rule_grain",
+    "target": "paid_order",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "连接",
+      "重复",
+      "粒度",
+      "订单数",
+      "明细",
+      "退款"
+    ],
+    "severity": "block",
+    "scope": "订单与明细或退款关系",
+    "confidence": "high",
+    "description": "订单一行一笔，明细一行一个商品行，退款一行一次事件。多次退款或多条明细会重复展开原订单，订单金额和数量不可被展开行数放大。",
+    "evidence": [
+      "ev_schema",
+      "ev_grain",
+      "ev_refunds"
+    ]
+  },
+  {
+    "id": "rule_net",
+    "target": "net_revenue",
+    "constraint_type": "scope",
+    "trigger_keywords": [
+      "净收入",
+      "收入",
+      "现金流",
+      "财务"
+    ],
+    "severity": "warning",
+    "scope": "本演示",
+    "confidence": "high",
+    "description": "净收入仅指支付订单群组截至季末的净额，不代表财务确认收入或当期净现金流。",
+    "evidence": [
+      "ev_policy"
+    ]
+  },
+  {
+    "id": "rule_aov",
+    "target": "payment_aov",
+    "constraint_type": "business_rule",
+    "trigger_keywords": [
+      "客单价",
+      "客户数",
+      "订单数",
+      "AOV"
+    ],
+    "severity": "block",
+    "scope": "支付客单价",
+    "confidence": "high",
+    "description": "支付金额除以有效支付订单数，不扣退款，不能用购买客户数作为分母；无订单时比值无定义。",
+    "evidence": [
+      "ev_policy"
+    ]
+  }
+]

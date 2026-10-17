@@ -1,0 +1,30 @@
+const task = await taskSpace(`EvoOntology acceptance ${Date.now()}`);
+const page = task.page("p1");
+const assert = (condition, message) => { if (!condition) throw new Error(message); };
+const results = [];
+for (const width of [1440, 390]) {
+  await page.cdp("Emulation.setDeviceMetricsOverride", {width, height: 844, deviceScaleFactor: 1, mobile: width === 390});
+  await page.goto("http://127.0.0.1:8765/");
+  const home = await page.evaluate(() => ({width: innerWidth, documentWidth: document.documentElement.scrollWidth, net: document.body.innerText.includes("¥630.00"), rows: document.querySelectorAll("tbody tr").length}));
+  assert(home.width === width && home.documentWidth === width && home.net && home.rows === 3, "Home layout or query result mismatch");
+  await page.click("summary >> nth=0", {label: "检查可展开实际SQL"});
+  assert(await page.evaluate(() => document.querySelector("details").open), "SQL detail did not open");
+  await page.click("loc=href:/.evoontology/visualizations/ontology-layer-explorer.html", {label: "检查官方结果页面"});
+  await page.click('text="中文"', {label: "切换中文结果"});
+  const explorer = await page.evaluate(() => ({width: innerWidth, documentWidth: document.documentElement.scrollWidth, objects: document.body.innerText.includes("语义对象：37"), tasks: document.body.innerText.includes("已执行问题：4"), synthetic: document.body.innerText.includes("合成探索问题")}));
+  assert(explorer.width === width && explorer.documentWidth === width && explorer.objects && explorer.tasks && explorer.synthetic, "Explorer results mismatch");
+  await page.click('text="本体内容"', {label: "检查本体图谱"});
+  await page.fill('input[placeholder="搜索语义对象"]', "净收入");
+  await page.click('text="net_revenue"', {label: "检查净收入定义"});
+  const graph = await page.evaluate(() => ({width: innerWidth, documentWidth: document.documentElement.scrollWidth, canvases: document.querySelectorAll("canvas").length, definition: document.body.innerText.includes("本期有效支付订单的原支付金额减去"), text: document.body.innerText.includes("net_revenue")}));
+  assert(graph.width === width && graph.documentWidth === width && graph.canvases === 3 && graph.definition && graph.text, "Graph or definition mismatch");
+  results.push({viewport: {width, height: 844}, home, explorer, graph});
+}
+const privateResponse = await page.fetch("/.loopx/registry.json");
+assert(privateResponse.status === 404, "Private LoopX registry is publicly served");
+const report = {passed: true, browser: "Ego Browser Chromium", method: "Viewport emulation, not physical mobile or independent browser-engine testing", checks: results, privateRegistryStatus: privateResponse.status, limitations: ["Phone graph controls are dense; desktop is recommended.", "No formal evolution or independent model evaluation."]};
+await page.cdp("Emulation.clearDeviceMetricsOverride");
+await page.goto("http://127.0.0.1:8765/");
+console.log(report);
+console.log(await page.snapshot());
+await task.finish({keep: []});

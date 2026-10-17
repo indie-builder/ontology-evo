@@ -1,0 +1,85 @@
+{
+  "fixture": "evo-sales-v1",
+  "synthetic": true,
+  "period": [
+    "2026-07-01",
+    "2026-10-01"
+  ],
+  "database_sha256": "76135cf8fd87c6641285521ab3da6a098233bdc52ed189bc2cf38a315536e59f",
+  "read_only_verified": true,
+  "results": {
+    "totals": [
+      {
+        "gross_cents": 76000,
+        "refund_cents": 13000,
+        "net_cents": 63000,
+        "paid_orders": 7,
+        "buyers": 6
+      }
+    ],
+    "channels": [
+      {
+        "channel": "ads",
+        "gross_cents": 8000,
+        "refund_cents": 8000,
+        "net_cents": 0,
+        "paid_orders": 1
+      },
+      {
+        "channel": "store",
+        "gross_cents": 32000,
+        "refund_cents": 5000,
+        "net_cents": 27000,
+        "paid_orders": 2
+      },
+      {
+        "channel": "web",
+        "gross_cents": 36000,
+        "refund_cents": 0,
+        "net_cents": 36000,
+        "paid_orders": 4
+      }
+    ],
+    "months": [
+      {
+        "month": "2026-07",
+        "gross_cents": 36000,
+        "paid_orders": 3
+      },
+      {
+        "month": "2026-08",
+        "gross_cents": 23000,
+        "paid_orders": 2
+      },
+      {
+        "month": "2026-09",
+        "gross_cents": 17000,
+        "paid_orders": 2
+      }
+    ],
+    "naive": [
+      {
+        "created_order_cents": 147000
+      }
+    ],
+    "fanout": [
+      {
+        "duplicated_gross_cents": 111000
+      }
+    ],
+    "units": [
+      {
+        "storage_type": "integer"
+      }
+    ]
+  },
+  "queries": {
+    "totals": "WITH cohort AS (\n SELECT * FROM orders\n WHERE paid_at >= '2026-07-01' AND paid_at < '2026-10-01'\n AND is_test = 0 AND status IN ('paid','partially_refunded','refunded')\n), refund_totals AS (\n SELECT order_id, SUM(amount_cents) AS refund_cents FROM refunds\n WHERE status = 'succeeded' AND refunded_at < '2026-10-01'\n GROUP BY order_id\n) SELECT SUM(o.amount_cents) AS gross_cents,\n SUM(COALESCE(r.refund_cents,0)) AS refund_cents,\n SUM(o.amount_cents - COALESCE(r.refund_cents,0)) AS net_cents,\n COUNT(*) AS paid_orders, COUNT(DISTINCT o.customer_id) AS buyers\n FROM cohort o LEFT JOIN refund_totals r ON o.order_id = r.order_id",
+    "channels": "WITH cohort AS (\n SELECT * FROM orders\n WHERE paid_at >= '2026-07-01' AND paid_at < '2026-10-01'\n AND is_test = 0 AND status IN ('paid','partially_refunded','refunded')\n), refund_totals AS (\n SELECT order_id, SUM(amount_cents) AS refund_cents FROM refunds\n WHERE status = 'succeeded' AND refunded_at < '2026-10-01'\n GROUP BY order_id\n) SELECT o.channel, SUM(o.amount_cents) AS gross_cents,\n SUM(COALESCE(r.refund_cents,0)) AS refund_cents,\n SUM(o.amount_cents - COALESCE(r.refund_cents,0)) AS net_cents,\n COUNT(*) AS paid_orders FROM cohort o\n LEFT JOIN refund_totals r ON o.order_id = r.order_id GROUP BY o.channel ORDER BY o.channel",
+    "months": "WITH cohort AS (\n SELECT * FROM orders\n WHERE paid_at >= '2026-07-01' AND paid_at < '2026-10-01'\n AND is_test = 0 AND status IN ('paid','partially_refunded','refunded')\n), refund_totals AS (\n SELECT order_id, SUM(amount_cents) AS refund_cents FROM refunds\n WHERE status = 'succeeded' AND refunded_at < '2026-10-01'\n GROUP BY order_id\n) SELECT substr(paid_at,1,7) AS month,\n SUM(amount_cents) AS gross_cents, COUNT(*) AS paid_orders\n FROM cohort GROUP BY month ORDER BY month",
+    "naive": "SELECT SUM(amount_cents) AS created_order_cents FROM orders\n WHERE created_at >= '2026-07-01' AND created_at < '2026-10-01'",
+    "fanout": "WITH cohort AS (\n SELECT * FROM orders\n WHERE paid_at >= '2026-07-01' AND paid_at < '2026-10-01'\n AND is_test = 0 AND status IN ('paid','partially_refunded','refunded')\n), refund_totals AS (\n SELECT order_id, SUM(amount_cents) AS refund_cents FROM refunds\n WHERE status = 'succeeded' AND refunded_at < '2026-10-01'\n GROUP BY order_id\n) SELECT SUM(o.amount_cents) AS duplicated_gross_cents\n FROM cohort o LEFT JOIN refunds r ON o.order_id=r.order_id",
+    "units": "SELECT DISTINCT typeof(amount_cents) AS storage_type FROM orders"
+  },
+  "interpretation": "公开合成案例的确定性查询验证；不是独立评测，也不证明模型准确率提升。"
+}

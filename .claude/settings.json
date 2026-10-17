@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "extraKnownMarketplaces": {
+    "evoontology": {
+      "source": {
+        "source": "github",
+        "repo": "ruc-datalab/EvoOntology"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "evoontology@evoontology": true
+  },
+  "permissions": {
+    "allow": [
+      "mcp__plugin_evoontology_evo-semantic__ontology_workflow_status",
+      "mcp__plugin_evoontology_evo-semantic__browse_semantics",
+      "mcp__plugin_evoontology_evo-semantic__resolve_semantics",
+      "mcp__plugin_evoontology_evo-semantic__prepare_ontology_workload",
+      "mcp__plugin_evoontology_evo-semantic__start_ontology_task",
+      "mcp__plugin_evoontology_evo-semantic__resolve_ontology_task",
+      "mcp__plugin_evoontology_evo-semantic__execute_ontology_query",
+      "mcp__plugin_evoontology_evo-semantic__record_ontology_task_event",
+      "mcp__plugin_evoontology_evo-semantic__finish_ontology_task"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -I \"${CLAUDE_PROJECT_DIR}/.claude/hooks/session-start.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

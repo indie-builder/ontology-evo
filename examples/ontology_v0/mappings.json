@@ -1,0 +1,101 @@
+[
+  {
+    "id": "map_order",
+    "term_id": "paid_order",
+    "database_source": "data/sales.sqlite",
+    "table": "orders",
+    "column": "order_id",
+    "semantic_filter": "非测试，支付日期在报表期间，状态为已支付、部分退款或已退款。",
+    "aggregation_semantics": "订单标识代表不同订单，明细或退款关联不能增加订单数量。",
+    "grain": "一行一订单",
+    "validation": "docs/business-policy.md；artifacts/probes.json 的 schema、status、grain。"
+  },
+  {
+    "id": "map_gross",
+    "term_id": "gross_payment",
+    "database_source": "data/sales.sqlite",
+    "table": "orders",
+    "column": "amount_cents",
+    "semantic_filter": "有效支付订单群组。",
+    "aggregation_semantics": "不同有效订单的原支付金额总和；存储为分。",
+    "grain": "订单",
+    "validation": "ev_policy、ev_units、ev_schema"
+  },
+  {
+    "id": "map_refund",
+    "term_id": "successful_refund",
+    "database_source": "data/sales.sqlite",
+    "table": "refunds",
+    "column": "amount_cents",
+    "semantic_filter": "退款状态 succeeded，发生日期早于快照截止，原订单属于本期有效支付群组。",
+    "aggregation_semantics": "退款事件金额可加，同一订单的多次退款均有效，原订单金额不随事件重复。",
+    "grain": "退款事件",
+    "validation": "ev_refunds 与 ev_policy"
+  },
+  {
+    "id": "map_net",
+    "term_id": "net_revenue",
+    "database_source": "data/sales.sqlite",
+    "table": "orders",
+    "column": "amount_cents",
+    "semantic_filter": "有效支付订单群组及其截止前成功退款。",
+    "aggregation_semantics": "订单原支付金额与其成功退款之差的总和；净收入是派生概念，没有净收入物理列。",
+    "grain": "订单群组",
+    "validation": "ev_policy、ev_refunds、ev_schema"
+  },
+  {
+    "id": "map_date",
+    "term_id": "payment_date",
+    "database_source": "data/sales.sqlite",
+    "table": "orders",
+    "column": "paid_at",
+    "semantic_filter": "以支付日期而非创建日期归属期间，期间包含起点不包含终点。",
+    "aggregation_semantics": "支付月份对业务自然日分组。",
+    "grain": "订单支付自然日",
+    "validation": "ev_boundary 与 ev_policy"
+  },
+  {
+    "id": "map_channel",
+    "term_id": "order_channel",
+    "database_source": "data/sales.sqlite",
+    "table": "orders",
+    "column": "channel",
+    "semantic_filter": "有效支付订单群组。",
+    "aggregation_semantics": "按订单级渠道分类。",
+    "grain": "订单",
+    "validation": "ev_schema 与 ev_policy"
+  },
+  {
+    "id": "map_buyers",
+    "term_id": "paying_customer",
+    "database_source": "data/sales.sqlite",
+    "table": "orders",
+    "column": "customer_id",
+    "semantic_filter": "有效支付订单群组。",
+    "aggregation_semantics": "不同客户标识数量，同一客户多笔订单只计一次。",
+    "grain": "客户在支付订单群组中去重",
+    "validation": "ev_schema 与 ev_policy"
+  },
+  {
+    "id": "map_aov",
+    "term_id": "payment_aov",
+    "database_source": "data/sales.sqlite",
+    "table": "orders",
+    "column": "amount_cents",
+    "semantic_filter": "有效支付订单群组。",
+    "aggregation_semantics": "支付金额与有效支付订单数之比；展示为元每订单。",
+    "grain": "报表期间或渠道",
+    "validation": "ev_policy 与 ev_grain"
+  },
+  {
+    "id": "map_refund_event",
+    "term_id": "refund_event",
+    "database_source": "data/sales.sqlite",
+    "table": "refunds",
+    "column": "refund_id",
+    "semantic_filter": "退款事件本身包含 pending 和 succeeded，成功退款指标采用更严格范围。",
+    "aggregation_semantics": "每个 refund_id 是独立退款事件。",
+    "grain": "一行一退款事件",
+    "validation": "ev_schema 与 ev_refunds"
+  }
+]
